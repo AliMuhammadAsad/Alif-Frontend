@@ -1,0 +1,13 @@
+streamlit==1.24.0
+python-dotenv==1.0.0
+torch
+tensorflow
+scikit-learn
+joblib
+sentencepiece
+numpy
+logging
+inspect
+tqdm
+dataclass
+
