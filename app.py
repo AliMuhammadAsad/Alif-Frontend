@@ -2,10 +2,12 @@ import os
 import torch
 import gradio as gr
 import joblib
+import re
 from Naive_gpt.model import GPTLanguageModel
 from Naive_gpt.config import *
 from Tokenizer import LlamaTokenizer, GPT4Tokenizer
 from Tokenizer import train_tokenizer, load_tokenizer
+from langdetect import detect, LangDetectException
 
 # Model Configurations
 MODEL_CONFIGS = {
@@ -44,22 +46,38 @@ def load_model_and_tokenizer(model_name):
     model.eval()
     return model, tokenizer
 
+# Check if input contains English characters
+def contains_english(text):
+    # Regex to check for English letters (A-Z, a-z)
+    return bool(re.search('[a-zA-Z]', text))
+
 # Generate response
 def generate_text(history, prompt, model_name, max_tokens):
+    # Check if input contains English characters
+    if contains_english(prompt):
+        return history, "Please enter your message in Urdu. Only Urdu input is allowed."
+
+    try:
+        # Detect the language of the input prompt
+        if detect(prompt) == 'en':
+            return history, "Please enter your message in Urdu. Only Urdu input is allowed."
+    except LangDetectException:
+        # In case of an error in language detection, assume it's not English
+        pass
+
+    # If the input is valid (Urdu), proceed with text generation
     model, tokenizer = load_model_and_tokenizer(model_name)
-    
-    if history:
-        conversation = " ".join([entry[0] + " " + entry[1] for entry in history])
-        prompt = conversation + " " + prompt  # Append new prompt to history
-    
+
+    # Encode the current prompt only (do not use history for context)
     encoded = tokenizer.encode(prompt)
     encoded_tensor = torch.tensor(encoded).unsqueeze(0)
-    
+
+    # Generate response
     out = model.generate(idx=encoded_tensor, max_new_tokens=max_tokens)
-    
     response = tokenizer.decode(out.squeeze(0).tolist())
-    
-    history.append((prompt, response))  # Save the new response in history
+
+    # Update history for display only
+    history.append((prompt, response))
     return history, ""
 
 # About Section
