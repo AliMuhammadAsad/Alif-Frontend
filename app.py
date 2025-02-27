@@ -97,7 +97,7 @@ with gr.Blocks(css="footer {visibility: hidden}") as demo:
     
     with gr.Row():
         model_selector = gr.Dropdown(choices=list(MODEL_CONFIGS.keys()), label="Choose a Model", value=list(MODEL_CONFIGS.keys())[0])
-        max_tokens_slider = gr.Slider(minimum=64, maximum=384, value=128, label="Max Tokens", interactive=True)
+        max_tokens_slider = gr.Slider(minimum=64, maximum=512, value=64, label="Max Tokens", interactive=True)
     
     chatbot = gr.Chatbot(label="Chat with Alif LLM الف", height=400)
     user_input = gr.Textbox(label="Your Message", placeholder="Type an Urdu sentence...", interactive=True)
