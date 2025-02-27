@@ -1,0 +1,9 @@
+DataLoader==2.0
+gradio==5.19.0
+joblib==1.3.2
+numpy==2.2.3
+sentencepiece==0.2.0
+tiktoken==0.8.0
+torch==2.5.1
+tqdm==4.67.0
+transformers==4.46.2
